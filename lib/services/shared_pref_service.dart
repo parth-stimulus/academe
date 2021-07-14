@@ -21,7 +21,7 @@ class SharedPrefService {
       result[key] = prefs.getString(key);
     } catch (e) {
       result['error'] =
-          'Error occured while getting ' + key + ': ' + e.toString();
+          'Error occurred while getting ' + key + ': ' + e.toString();
     }
     return result;
   }
@@ -34,7 +34,7 @@ class SharedPrefService {
       print('Persistence storage cleared.');
     } catch (e) {
       result['error'] =
-          'Error occured while clearing shared prefernces : ' + e.toString();
+          'Error occurred while clearing shared prefernces : ' + e.toString();
     }
     return result;
   }

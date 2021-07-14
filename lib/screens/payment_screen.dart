@@ -16,6 +16,7 @@ class PaymentScreen extends StatefulWidget {
   final Map<String, dynamic> orderData;
 
   PaymentScreen({@required this.orderData});
+
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
 }
@@ -36,12 +37,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
     startPayment(widget.orderData);
   }
 
-   Future<Map<String, Object>> getOrderId(Map<String, dynamic> orderData) async {
+  Future<Map<String, Object>> getOrderId(Map<String, dynamic> orderData) async {
     Map<String, Object> result = new Map();
     try {
       var uri = Uri.https(kAPIDomain, '/api/order');
-      Map _authTokenResult =
-      await SharedPrefService.fetchFromSharedPref('authToken');
+      Map _authTokenResult = await SharedPrefService.fetchFromSharedPref('authToken');
       if (_authTokenResult.containsKey('error')) {
         throw Exception(_authTokenResult['error']);
       }
@@ -50,18 +50,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
         "token": _authTokenResult['authToken'],
       };
       var body = convert.jsonEncode(requestData);
-      var response = await http.post(uri,
-          headers: {"Content-Type": "application/json"}, body: body);
+      var response = await http.post(uri, headers: {"Content-Type": "application/json"}, body: body);
       Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
-      print('Response: ' + responseMap.toString());
+      // print('Response: ' + responseMap.toString());
       if (responseMap["error"] == true) {
         throw Exception(responseMap["cause"].toString());
       }
       result['data'] = responseMap["data"];
       return result;
     } catch (e) {
-      result['error'] =
-          'Error occured while registering your account: ' + e.toString();
+      result['error'] = 'Error occured while registering your account: ' + e.toString();
       return result;
     }
   }
@@ -70,8 +68,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     Map<String, Object> result = new Map();
     try {
       var uri = Uri.https(kAPIDomain, '/api/paymentstatus');
-      Map _authTokenResult =
-      await SharedPrefService.fetchFromSharedPref('authToken');
+      Map _authTokenResult = await SharedPrefService.fetchFromSharedPref('authToken');
       if (_authTokenResult.containsKey('error')) {
         throw Exception(_authTokenResult['error']);
       }
@@ -79,11 +76,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
         "order_id": orderId,
         "token": _authTokenResult['authToken'],
         "payment_status": paymentStatus,
-        "transaction_id" : tansactionId
+        "transaction_id": tansactionId
       };
       var body = convert.jsonEncode(requestData);
-      var response = await http.post(uri,
-          headers: {"Content-Type": "application/json"}, body: body);
+      var response = await http.post(uri, headers: {"Content-Type": "application/json"}, body: body);
       Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
       print('Response: ' + responseMap.toString());
       if (responseMap["error"] == true) {
@@ -92,8 +88,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       result['data'] = responseMap["data"];
       return result;
     } catch (e) {
-      result['error'] =
-          'Error occured while registering your account: ' + e.toString();
+      result['error'] = 'Error occured while registering your account: ' + e.toString();
       return result;
     }
   }
@@ -104,21 +99,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
     orderData['paymentStatus'] = 'paymentStarted';
     orderData['lastPaymentStartTime'] = currentTime;
     Map<String, dynamic> order = await getOrderId(orderData);
-    print('********************ORDER ID*******************');
-    print(order['data']['order_id']);
+    // print('********************ORDER ID*******************');
+    // print(order['data']['order_id']);
 //    String orderId = '123456789';
     academeOrderId = order['data']['order_id'];
-    print(orderData['courses_image'].toString());
+    // print(orderData['courses_image'].toString());
     openCheckout(
         orderId: academeOrderId.toString(),
         amount: double.parse(orderData['price'].toStringAsFixed(2)),
         description: orderData['name'],
-        fillEmail: orderData['userEmail'] != null
-            ? orderData['userEmail']
-            : "",
-        fillPhone: orderData['userPhoneNumber'] != null
-            ? orderData['userPhoneNumber']
-            : "");
+        fillEmail: orderData['userEmail'] != null ? orderData['userEmail'] : "",
+        fillPhone: orderData['userPhoneNumber'] != null ? orderData['userPhoneNumber'] : "");
   }
 
   void clear() {
@@ -127,28 +118,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   void openCheckout(
       {@required String orderId,
-        @required num amount,
-        @required String description,
-        @required String fillEmail,
-        @required String fillPhone}) async {
+      @required num amount,
+      @required String description,
+      @required String fillEmail,
+      @required String fillPhone}) async {
     var options = {
       'key': 'rzp_test_lkFREAZCb2u471',
       'amount': (amount * 100).toStringAsFixed(2), //in paise
       'name': 'Academe',
       'description': description,
       'prefill': {'contact': fillPhone, 'email': fillEmail},
-//      'external': {
-//        'wallets': ['paytm']
-//      }
     };
 
-    print('Options: ' + options.toString());
+    // print('Options: ' + options.toString());
 
     try {
       _razorpay.open(options);
     } catch (e) {
       print(e);
-      //TODO : SEND EMAIL IN CASE THIS HAPPENS WITH A USER
     }
   }
 
@@ -156,70 +143,72 @@ class _PaymentScreenState extends State<PaymentScreen> {
     var currentTime = await TimeHelperService().getCurrentTimeInUTC();
     print('Order id: ' +
         academeOrderId.toString() +
-        ' Successfull Payment id: ' +
+        ' Successful Payment id: ' +
         response.paymentId +
         ' on ' +
         currentTime.toString());
 
-    Fluttertoast.showToast(
-        msg: "SUCCESS: " + response.paymentId, toastLength: Toast.LENGTH_LONG);
+    Fluttertoast.showToast(msg: "SUCCESS: " + response.paymentId, toastLength: Toast.LENGTH_LONG);
     Map<String, dynamic> successData = {
       'orderStatus': 'placed',
       'paymentStatus': 'completed',
       'placedAtTime': currentTime,
       'paymentId': response.paymentId
     };
-    print(successData.toString());
+    // print(successData.toString());
     Map<String, dynamic> result;
     result = await updateOrder(academeOrderId, true, successData['paymentId']);
-//    if(result['error'] == false) {
-      this.setState((){
-        showLoader = false;
-      });
-      showDialog(
-        context: context,
-        builder: (BuildContext context) => CoursePurchasedDialog(
-            courseImagePath: widget.orderData['courses_image'],
-            courseTitle: widget.orderData['name'],
-            courseSubtitle: widget.orderData['total_sessions'].toString(),
-            courseDuration: widget.orderData['course_duration'],
-            courseSessions: widget.orderData['total_sessions'].toString(),
-            courseStream: widget.orderData['stream_name'],
-            coursePrice: widget.orderData['price']),
-      );
-//    }
+    this.setState(() {
+      showLoader = false;
+    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CoursePurchasedDialog(
+          courseImagePath: widget.orderData['courses_image'],
+          courseTitle: widget.orderData['name'],
+          courseSubtitle: widget.orderData['total_sessions'].toString(),
+          courseDuration: widget.orderData['course_duration'],
+          courseSessions: widget.orderData['total_sessions'].toString(),
+          courseStream: widget.orderData['stream_name'],
+          coursePrice: widget.orderData['price']),
+    );
   }
 
   void _handlePaymentError(PaymentFailureResponse response) async {
-    print(response.toString());
-    Navigator.pop(context);
-    if (response.code != 2) {
-      Fluttertoast.showToast(
-          msg: "ERROR: " + response.code.toString() + " - " + response.message,
-          toastLength: Toast.LENGTH_LONG);
+    this.setState(() {
+      showLoader = false;
+    });
+    showDialog(
+      context: context,
+      builder: (context) => CoursePurchaseFailedDialog(
+          courseImagePath: widget.orderData['courses_image'],
+          courseTitle: widget.orderData['name'],
+          courseSubtitle: widget.orderData['total_sessions'].toString(),
+          courseDuration: widget.orderData['course_duration'],
+          courseSessions: widget.orderData['total_sessions'].toString(),
+          courseStream: widget.orderData['stream_name'],
+          coursePrice: double.parse("${widget.orderData['price']}")),
+    );
 
-    }
-    Map<String, dynamic> failureData = {
-      'paymentStatus': 'failed',
-      'paymentFailureError': response.message
-    };
+    Fluttertoast.showToast(
+        msg: "ERROR: " + response.code.toString() + " - " + response.message, toastLength: Toast.LENGTH_LONG);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
-    print(response.toString());
-    Fluttertoast.showToast(
-        msg: "EXTERNAL_WALLET: " + response.walletName, toastLength: Toast.LENGTH_LONG);
+    // print(response.toString());
+    Fluttertoast.showToast(msg: "EXTERNAL_WALLET: " + response.walletName, toastLength: Toast.LENGTH_LONG);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Payment'),),
+      appBar: AppBar(
+        title: Text('Payment'),
+      ),
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-//            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -230,8 +219,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
               ),
               Padding(
-                padding:
-                const EdgeInsets.symmetric(vertical: 30, horizontal: 80),
+                padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 80),
                 child: showLoader ? LinearProgressIndicator() : Container(),
               ),
               Flexible(
@@ -241,24 +229,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   style: TextStyle(fontSize: 20),
                 ),
               ),
-//              Expanded(
-//                child: Column(
-//                  mainAxisAlignment: MainAxisAlignment.end,
-//                  crossAxisAlignment: CrossAxisAlignment.center,
-//                  children: <Widget>[
-//                    Text(
-//                      'Payments partner',
-//                      textAlign: TextAlign.center,
-//                      style: TextStyle(fontStyle: FontStyle.italic),
-//                    ),
-//                    Image.asset(
-//                      'assets/images/razorpay_seal.png',
-//                      height: 45,
-//                      width: 150,
-//                    )
-//                  ],
-//                ),
-//              ),
             ],
           ),
         ),
@@ -268,21 +238,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
 }
 
 class CoursePurchasedDialog extends StatelessWidget {
-  final String courseImagePath,
-      courseTitle,
-      courseSubtitle,
-      courseDuration,
-      courseSessions,
-      courseStream;
+  final String courseImagePath, courseTitle, courseSubtitle, courseDuration, courseSessions, courseStream;
   final double coursePrice;
+
   CoursePurchasedDialog(
       {@required this.courseImagePath,
-        @required this.courseTitle,
-        @required this.courseSubtitle,
-        @required this.courseDuration,
-        @required this.courseSessions,
-        @required this.courseStream,
-        @required this.coursePrice});
+      @required this.courseTitle,
+      @required this.courseSubtitle,
+      @required this.courseDuration,
+      @required this.courseSessions,
+      @required this.courseStream,
+      @required this.coursePrice});
 
   @override
   Widget build(BuildContext context) {
@@ -319,8 +285,7 @@ class CoursePurchasedDialog extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         'Purchase Successful',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(
                         height: 5,
@@ -343,14 +308,16 @@ class CoursePurchasedDialog extends StatelessWidget {
                 subtitle: this.courseSubtitle,
                 duration: this.courseDuration,
                 stream: this.courseStream,
-                price: this.coursePrice.toInt()),
+                price: this.coursePrice),
           ),
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Buttons.primary(text: 'Start Course', onTap: () {
-//              Navigator.pushNamedAndRemoveUntil(context, MyHomePage.id, (_) => false, arguments: ScreenArguments(1, true) );
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => MyHomePage(subScreenIndex: 1)), (_) => false);
-            }),
+            child: Buttons.primary(
+                text: 'Start Course',
+                onTap: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => MyHomePage(subScreenIndex: 1)), (_) => false);
+                }),
           )
         ],
       ),
@@ -358,3 +325,88 @@ class CoursePurchasedDialog extends StatelessWidget {
   }
 }
 
+class CoursePurchaseFailedDialog extends StatelessWidget {
+  final String courseImagePath, courseTitle, courseSubtitle, courseDuration, courseSessions, courseStream;
+  final double coursePrice;
+
+  const CoursePurchaseFailedDialog(
+      {Key key,
+      this.courseImagePath,
+      this.courseTitle,
+      this.courseSubtitle,
+      this.courseDuration,
+      this.courseSessions,
+      this.courseStream,
+      this.coursePrice})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: dialogContent(context),
+    );
+  }
+
+  dialogContent(BuildContext context) {
+    return Container(
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(13),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 40, 20, 40),
+                child: Icon(
+                  Icons.cancel,
+                  color: AcademeAppTheme.primaryColor,
+                  size: 50,
+                ),
+              ),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Purchase Failed',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 40),
+            child: courseListTile(
+                imagePath: this.courseImagePath,
+                title: this.courseTitle,
+                subtitle: this.courseSubtitle,
+                duration: this.courseDuration,
+                stream: this.courseStream,
+                price: this.coursePrice),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Buttons.primary(
+                text: 'Back To Home',
+                onTap: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => MyHomePage(subScreenIndex: 0)), (_) => false);
+                }),
+          )
+        ],
+      ),
+    );
+  }
+}

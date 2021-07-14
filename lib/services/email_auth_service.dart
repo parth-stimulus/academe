@@ -17,7 +17,7 @@ class EmailAuthService {
       var response = await http.post(uri,
           headers: {"Content-Type": "application/json"}, body: body);
       Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
-      print('Response: ' + responseMap.toString());
+      // print('Response: ' + responseMap.toString());
       if (responseMap["error"] == true) {
         throw Exception(responseMap["cause"].toString());
       }
@@ -25,7 +25,7 @@ class EmailAuthService {
       return result;
     } catch (e) {
       result['error'] =
-          'Error occured while registering your account: ' + e.toString();
+          'Error occurred while registering your account: ' + e.toString();
       return result;
     }
   }
@@ -40,14 +40,14 @@ class EmailAuthService {
       var response = await http.post(uri,
           headers: {"Content-Type": "application/json"}, body: body);
       Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
-      print('Response: ' + responseMap.toString());
+      // print('Response: ' + responseMap.toString());
       if (responseMap["error"] == true) {
         throw Exception(responseMap["cause"].toString());
       }
       result['data'] = responseMap["data"];
       return result;
     } catch (e) {
-      result['error'] = 'Error occured while logging in: ' + e.toString();
+      result['error'] = 'Error occurred while logging in: ' + e.toString();
       return result;
     }
   }
@@ -63,7 +63,7 @@ class EmailAuthService {
       var response = await http.post(uri,
           headers: {"Content-Type": "application/json"}, body: body);
       Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
-      print('Response: ' + responseMap.toString());
+      // print('Response: ' + responseMap.toString());
       if (responseMap["error"] == true &&
           responseMap["cause"].toString() == "email does not exist") {
         responseMap["exists"] = false;
@@ -72,13 +72,13 @@ class EmailAuthService {
         responseMap["exists"] = true;
       } else {
         throw Exception(
-            'Unable to check whehter the account exits or not. Please contact support');
+            'Unable to check whether the account exits or not. Please contact support');
       }
       result['exists'] = responseMap["exists"];
       return result;
     } catch (e) {
       result['error'] =
-          'Error occured while checking the account: ' + e.toString();
+          'Error occurred while checking the account: ' + e.toString();
       return result;
     }
   }

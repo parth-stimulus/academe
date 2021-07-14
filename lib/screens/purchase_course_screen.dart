@@ -8,13 +8,14 @@ import 'package:academe/screens/home_screen.dart';
 class PurchaseCourseScreen extends StatefulWidget {
   static String id = 'purchase_course_screen';
   final Map<String, dynamic> selectedCourseData;
+
   PurchaseCourseScreen({@required this.selectedCourseData});
+
   @override
   _PurchaseCourseScreenState createState() => _PurchaseCourseScreenState();
 }
 
 class _PurchaseCourseScreenState extends State<PurchaseCourseScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,9 +44,7 @@ class _PurchaseCourseScreenState extends State<PurchaseCourseScreen> {
                         thickness: 0.5,
                       ),
                     ),
-                    faq(
-                        question: 'What is covered in the course?',
-                        answer: widget.selectedCourseData['description']),
+                    faq(question: 'What is covered in the course?', answer: widget.selectedCourseData['description']),
                     faq(
                         question: 'What is number of sessions in the course?',
                         answer: widget.selectedCourseData['total_sessions'].toString()),
@@ -54,8 +53,7 @@ class _PurchaseCourseScreenState extends State<PurchaseCourseScreen> {
                         answer: widget.selectedCourseData['course_duration']),
                     faq(
                         question: 'What is validity of purchase?',
-                        answer:
-                            'You can access this course on Academe App with a Lifetime validity.'),
+                        answer: 'You can access this course on Academe App with a Lifetime validity.'),
                     faq(
                         question: 'Is it safe to purchase online?',
                         answer:
@@ -65,10 +63,9 @@ class _PurchaseCourseScreenState extends State<PurchaseCourseScreen> {
               ),
             ),
           ),
-          proceedToPayButton(onTap: ()async {
-            Map _authTokenResult =
-                await SharedPrefService.fetchFromSharedPref('authToken');
-            if(_authTokenResult['authToken'] != null) {
+          proceedToPayButton(onTap: () async {
+            Map _authTokenResult = await SharedPrefService.fetchFromSharedPref('authToken');
+            if (_authTokenResult['authToken'] != null) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -80,14 +77,13 @@ class _PurchaseCourseScreenState extends State<PurchaseCourseScreen> {
               );
             } else {
               Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          MyHomePage(subScreenIndex: 2)),
-                      (_) => false);
-              Fluttertoast.showToast(
-                  msg: "You need to login before making a payment.", toastLength: Toast.LENGTH_LONG);
+                MaterialPageRoute(
+                  builder: (context) => MyHomePage(subScreenIndex: 2),
+                ),
+                (_) => false,
+              );
+              Fluttertoast.showToast(msg: "You need to login before making a payment.", toastLength: Toast.LENGTH_LONG);
             }
-
           }),
         ],
       ),
@@ -109,19 +105,13 @@ class _PurchaseCourseScreenState extends State<PurchaseCourseScreen> {
             children: <Widget>[
               Text(
                 '₹' + widget.selectedCourseData['price'].toString(),
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
               ),
               Row(
                 children: <Widget>[
                   Text(
                     'Proceed to Pay',
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     width: 5,
@@ -168,7 +158,7 @@ Widget courseListTile(
     @required String subtitle,
     @required String duration,
     @required String stream,
-    int price}) {
+    double price}) {
   return ListTile(
     isThreeLine: true,
     leading: ClipRRect(
@@ -202,7 +192,7 @@ Widget courseListTile(
         Row(
           children: <Widget>[
             Text(
-              subtitle+" sessions",
+              subtitle + " sessions",
               style: TextStyle(color: AcademeAppTheme.lightText, fontSize: 14),
             ),
           ],
@@ -214,15 +204,13 @@ Widget courseListTile(
             children: <Widget>[
               Text(
                 stream,
-                style:
-                    TextStyle(color: AcademeAppTheme.lightText, fontSize: 12),
+                style: TextStyle(color: AcademeAppTheme.lightText, fontSize: 12),
               ),
               Visibility(
                 visible: price != null,
                 child: Text(
                   '₹' + price.toString(),
-                  style:
-                      TextStyle(color: AcademeAppTheme.lightText, fontSize: 12),
+                  style: TextStyle(color: AcademeAppTheme.lightText, fontSize: 12),
                 ),
               ),
             ],
@@ -232,5 +220,3 @@ Widget courseListTile(
     ),
   );
 }
-
-

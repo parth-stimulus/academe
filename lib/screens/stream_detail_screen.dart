@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:academe/screens/course_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:academe/constant.dart';
@@ -5,68 +6,31 @@ import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
 class StreamDetailScreen extends StatefulWidget {
-
   final Map streamId;
+
   StreamDetailScreen({
     @required this.streamId,
   });
+
   @override
   _StreamDetailScreenState createState() => _StreamDetailScreenState();
 }
 
 class _StreamDetailScreenState extends State<StreamDetailScreen> {
-  Map <dynamic,dynamic> streamData;
-
-  var courseData = <Map> [
-    {
-      'imagePath': 'assets/design_course/interFace3.png',
-      'title': 'User interface Design',
-      'subtitle': '23 sessions',
-      'duration': '2h 20m',
-      'money': 399,
-      'purchaseDate': '13/04/2020',
-    },
-    {
-      'imagePath': 'assets/design_course/interFace4.png',
-      'title': 'User interface Design',
-      'subtitle': '23 sessions',
-      'duration': '2h 20m',
-      'money': 399,
-      'purchaseDate': '13/04/2020',
-    },
-    {
-      'imagePath': 'assets/design_course/interFace4.png',
-      'title': 'User interface Design',
-      'subtitle': '23 sessions',
-      'duration': '2h 20m',
-      'money': 399,
-      'purchaseDate': '13/04/2020',
-    },
-    {
-      'imagePath': 'assets/design_course/interFace3.png',
-      'title': 'User interface Design',
-      'subtitle': '23 sessions',
-      'duration': '2h 20m',
-      'money': 399,
-      'purchaseDate': '13/04/2020',
-    }
-  ];
+  Map<dynamic, dynamic> streamData;
 
   @override
   void initState() {
     super.initState();
-//    streamData = getStreamData();
-//    print('INIT: $streamData.');
   }
 
   getStreamData() async {
-    var url = Uri.https(kAPIDomain, '/api/streamdetails/').toString()
-        +widget.streamId['id'].toString();
+    var url = Uri.https(kAPIDomain, '/api/streamdetails/').toString() + widget.streamId['id'].toString();
     var response = await http.get(url);
     if (response.statusCode == 200) {
       var jsonResponse = convert.jsonDecode(response.body);
       streamData = jsonResponse['data'];
-      print('Stream data: $streamData.');
+      // log('Stream data: $streamData.');
     } else {
       print('Request failed with status: ${response.statusCode}.');
     }
@@ -82,8 +46,8 @@ class _StreamDetailScreenState extends State<StreamDetailScreen> {
       body: ListView(
         children: <Widget>[
           Container(
-            child: Image.asset(
-                'assets/images/StreamImage1.png',
+            child: Image.network(
+              widget.streamId['banner'],
               fit: BoxFit.cover,
             ),
           ),
@@ -95,7 +59,7 @@ class _StreamDetailScreenState extends State<StreamDetailScreen> {
                   Row(
                     children: <Widget>[
                       Text(
-                        'About '+widget.streamId['name'],
+                        'About ' + widget.streamId['name'],
                         style: TextStyle(fontSize: 12, color: AcademeAppTheme.lightText),
                       ),
                     ],
@@ -105,10 +69,8 @@ class _StreamDetailScreenState extends State<StreamDetailScreen> {
                     child: Text(
                       widget.streamId['description'],
                       style: TextStyle(fontSize: 12, color: AcademeAppTheme.lightText),
-
                     ),
                   )
-
                 ],
               ),
             ),
@@ -124,10 +86,12 @@ class _StreamDetailScreenState extends State<StreamDetailScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          Text(
-                            widget.streamId['total_courses'].toString()+' Courses for '+ widget.streamId['name'],
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.left,
+                          Expanded(
+                            child: Text(
+                              widget.streamId['total_courses'].toString() + ' Courses for ' + widget.streamId['name'],
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.left,
+                            ),
                           ),
                         ],
                       ),
@@ -137,20 +101,18 @@ class _StreamDetailScreenState extends State<StreamDetailScreen> {
                     future: getStreamData(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       print('-------data-----------');
-                      print(snapshot.data);
+                      // print(snapshot.data);
 
                       if (!snapshot.hasData) {
                         return const SizedBox();
                       } else {
                         return ListView.builder(
-//                    physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: snapshot.data['courses']['data'].length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return courseList(snapshot.data['courses']['data'][index]);
-                            }
-
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: snapshot.data['courses']['data'].length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return courseList(snapshot.data['courses']['data'][index]);
+                          },
                         );
                       }
                     },
@@ -166,7 +128,7 @@ class _StreamDetailScreenState extends State<StreamDetailScreen> {
 
   Widget courseList(Map data) {
     return ListTile(
-      onTap: (){
+      onTap: () {
         Navigator.push<dynamic>(
           context,
           MaterialPageRoute<dynamic>(
@@ -186,24 +148,17 @@ class _StreamDetailScreenState extends State<StreamDetailScreen> {
             width: 80.0,
             height: 80.0,
             fit: BoxFit.contain,
-          )
-      ),
+          )),
       title: Row(
         children: <Widget>[
           Text(
             data['name'].trim(),
-            style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 16
-            ),
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
           ),
           Spacer(),
           Text(
             data['course_duration'],
-            style: TextStyle(
-                color: AcademeAppTheme.lightText,
-                fontSize: 12
-            ),
+            style: TextStyle(color: AcademeAppTheme.lightText, fontSize: 12),
           )
         ],
       ),
@@ -212,11 +167,8 @@ class _StreamDetailScreenState extends State<StreamDetailScreen> {
           Row(
             children: <Widget>[
               Text(
-                data['total_sessions'].toString()+' Sessions',
-                style: TextStyle(
-                    color: AcademeAppTheme.lightText,
-                    fontSize: 12
-                ),
+                data['total_sessions'].toString() + ' Sessions',
+                style: TextStyle(color: AcademeAppTheme.lightText, fontSize: 12),
               ),
             ],
           ),
@@ -226,10 +178,7 @@ class _StreamDetailScreenState extends State<StreamDetailScreen> {
               children: <Widget>[
                 Text(
                   'View Course',
-                  style: TextStyle(
-                      color: AcademeAppTheme.primaryColor,
-                      fontSize: 12
-                  ),
+                  style: TextStyle(color: AcademeAppTheme.primaryColor, fontSize: 12),
                 ),
               ],
             ),
@@ -239,4 +188,3 @@ class _StreamDetailScreenState extends State<StreamDetailScreen> {
     );
   }
 }
-

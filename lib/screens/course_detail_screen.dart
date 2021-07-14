@@ -12,58 +12,55 @@ class CourseDetailScreen extends StatefulWidget {
   Map<dynamic, dynamic> courseDetails;
   bool isSubscribed;
 
-  CourseDetailScreen({
-    @required this.courseDetails,
-    @required this.isSubscribed
-  });
+  CourseDetailScreen({@required this.courseDetails, @required this.isSubscribed});
+
   @override
   _CourseDetailScreenState createState() => _CourseDetailScreenState();
 }
 
 class _CourseDetailScreenState extends State<CourseDetailScreen> {
-  VideoPlayerController _controller;
   VideoPlayerController _videoPlayerController1;
   ChewieController _chewieController;
   String videoUrl;
-  Map <dynamic,dynamic> courseData;
+  Map<dynamic, dynamic> courseData;
   Future<Map> userData;
   bool courseSubscribed;
+
   @override
   void initState() {
     super.initState();
     print('------course details-----');
-    print(widget.courseDetails);
+    // print(widget.courseDetails);
     videoUrl = widget.courseDetails['intro_video'];
-    _videoPlayerController1 = VideoPlayerController.network(
-        videoUrl);
+    _videoPlayerController1 = VideoPlayerController.network(videoUrl);
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController1,
       aspectRatio: 3 / 2,
       autoInitialize: true,
     );
     userData = AuthenticationService.getLoggedInUserDataFromAPI();
-    userData.then((subscriptionData){
+    userData.then((subscriptionData) {
       print('--------------object------------');
-        var length = subscriptionData['data']['courses'].length;
-        for (var i=0; i <length; i++){
-          if(subscriptionData['data']['courses'][i]['id'] == widget.courseDetails['id']) {
-            this.setState((){
-              courseSubscribed = true;
-            });
-          } else {
-            continue;
-          }
+      var length = subscriptionData['data']['courses'].length;
+      for (var i = 0; i < length; i++) {
+        if (subscriptionData['data']['courses'][i]['id'] == widget.courseDetails['id']) {
+          this.setState(() {
+            courseSubscribed = true;
+          });
+        } else {
+          continue;
         }
+      }
     });
   }
 
   getCourseData() async {
-    var url = Uri.https(kAPIDomain, '/api/coursedetails/').toString()+widget.courseDetails['id'].toString();
+    var url = Uri.https(kAPIDomain, '/api/coursedetails/').toString() + widget.courseDetails['id'].toString();
     var response = await http.get(url);
     if (response.statusCode == 200) {
       var jsonResponse = convert.jsonDecode(response.body);
       courseData = jsonResponse['data'];
-      print('Stream data: $courseData.');
+      // print('Stream data: $courseData.');
     } else {
       print('Request failed with status: ${response.statusCode}.');
     }
@@ -95,13 +92,13 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                   children: <Widget>[
                     Text(
                       'Introduction',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
               ),
-              Flexible(
+              Container(
+                height: 300,
                 child: Center(
                   child: Chewie(
                     controller: _chewieController,
@@ -131,7 +128,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               ),
               child: InkWell(
                 onTap: () {
-                  this.setState((){
+                  this.setState(() {
                     _videoPlayerController1.pause();
                     _chewieController.pause();
                   });
@@ -151,11 +148,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       Row(
                         children: <Widget>[
                           Text(
-                            '₹ '+widget.courseDetails['price'].toString(),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
+                            '₹ ' + widget.courseDetails['price'].toString(),
+                            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -164,10 +158,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         children: <Widget>[
                           Text(
                             'Purchase Course',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 4.0),
@@ -193,8 +184,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     children: <Widget>[
                       Text(
                         'What is covered in this course?',
-                        style: TextStyle(
-                            fontSize: 12, color: AcademeAppTheme.lightText),
+                        style: TextStyle(fontSize: 12, color: AcademeAppTheme.lightText),
                       ),
                     ],
                   ),
@@ -202,8 +192,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     padding: const EdgeInsets.only(top: 16.0),
                     child: Text(
                       widget.courseDetails['description'],
-                      style: TextStyle(
-                          fontSize: 12, color: AcademeAppTheme.lightText),
+                      style: TextStyle(fontSize: 12, color: AcademeAppTheme.lightText),
                     ),
                   )
                 ],
@@ -223,16 +212,13 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         children: <Widget>[
                           Text(
                             'All Sessions',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.left,
                           ),
                           Spacer(),
                           Text(
-                            widget.courseDetails['total_sessions'].toString()+' Sessions',
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: AcademeAppTheme.lightText),
+                            widget.courseDetails['total_sessions'].toString() + ' Sessions',
+                            style: TextStyle(fontSize: 16, color: AcademeAppTheme.lightText),
                             textAlign: TextAlign.left,
                           ),
                         ],
@@ -243,22 +229,22 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     future: getCourseData(),
                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                       print('-------data-----------');
-                      print(snapshot.data);
+                      // print(snapshot.data);
 
                       if (!snapshot.hasData) {
                         return const SizedBox();
                       } else {
                         return ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: snapshot.data['sessions']['data'].length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return courseList(snapshot.data['sessions']['data'][index]);
-                            });
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: snapshot.data['sessions']['data'].length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return courseList(snapshot.data['sessions']['data'][index]);
+                          },
+                        );
                       }
                     },
                   ),
-
                 ],
               ),
             ),
@@ -270,14 +256,13 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
 
   Widget courseList(Map data) {
     return ListTile(
-      onTap: (){
-        if(courseSubscribed == true && courseSubscribed != null) {
-          this.setState((){
+      onTap: () {
+        if (courseSubscribed == true && courseSubscribed != null) {
+          this.setState(() {
             _videoPlayerController1.pause();
             _chewieController.pause();
             videoUrl = data['video_url'];
-            _videoPlayerController1 = VideoPlayerController.network(
-                videoUrl);
+            _videoPlayerController1 = VideoPlayerController.network(videoUrl);
             _chewieController = ChewieController(
               videoPlayerController: _videoPlayerController1,
               aspectRatio: 3 / 2,
@@ -301,9 +286,12 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           )),
       title: Row(
         children: <Widget>[
-          Text(
-            data['name'],
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+          Expanded(
+            child: Text(
+              data['name'],
+              overflow: TextOverflow.visible,
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+            ),
           ),
           Spacer(),
           Text(
@@ -319,8 +307,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               Flexible(
                 child: Text(
                   data['description'],
-                  style:
-                      TextStyle(color: AcademeAppTheme.lightText, fontSize: 12),
+                  style: TextStyle(color: AcademeAppTheme.lightText, fontSize: 12),
                 ),
               ),
             ],
@@ -331,10 +318,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               children: <Widget>[
                 Text(
                   'Start Now >',
-                  style: TextStyle(
-                      color: AcademeAppTheme.primaryColor,
-                      fontSize: 12
-                  ),
+                  style: TextStyle(color: AcademeAppTheme.primaryColor, fontSize: 12),
                 ),
               ],
             ),
@@ -344,4 +328,3 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     );
   }
 }
-

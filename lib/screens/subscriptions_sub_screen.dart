@@ -27,7 +27,7 @@ class _SubscriptionsSubScreenState extends State<SubscriptionsSubScreen> {
               return FutureBuilder(
                 future: _subscriptionsData,
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  print(snapshot.data);
+                  // print(snapshot.data);
                   if (snapshot.hasData) {
                     if (snapshot.data['data'] == null) {
                       if (snapshot.data['error'] == true) {

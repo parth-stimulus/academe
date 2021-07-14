@@ -9,9 +9,11 @@ import 'package:academe/utils/academe_custom_icons_icons.dart';
 class MyHomePage extends StatefulWidget {
   static String id = 'my_home_page';
   final int subScreenIndex;
+
   MyHomePage({
     @required this.subScreenIndex,
   });
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -31,8 +33,8 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    if(widget.subScreenIndex != null) {
-      this.setState((){
+    if (widget.subScreenIndex != null) {
+      this.setState(() {
         _selectedSubScreen = widget.subScreenIndex;
       });
     }
@@ -69,19 +71,19 @@ class _MyHomePageState extends State<MyHomePage> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(AcademeCustomIcons.home),
-            title: Text('Home'),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(AcademeCustomIcons.subscriptions),
-            title: Text('Subscriptions'),
+            label: 'Subscriptions',
           ),
           BottomNavigationBarItem(
             icon: Icon(AcademeCustomIcons.account),
-            title: Text('Account'),
+            label: 'Account',
           ),
           BottomNavigationBarItem(
             icon: Icon(AcademeCustomIcons.more),
-            title: Text('More'),
+            label: 'More',
           ),
         ],
         onTap: _onItemTap,
@@ -109,7 +111,6 @@ class _MyHomePageState extends State<MyHomePage> {
       case 3:
         return MoreSubScreen();
     }
-
     return SizedBox();
   }
 }

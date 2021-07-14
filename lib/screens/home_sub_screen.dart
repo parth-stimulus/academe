@@ -14,6 +14,12 @@ class HomeSubScreen extends StatefulWidget {
 }
 
 class _HomeSubScreenState extends State<HomeSubScreen> {
+  List imageList = [
+    'assets/images/Banner1.png',
+    'assets/images/Banner2.png',
+    'assets/images/Banner3.png',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -25,10 +31,7 @@ class _HomeSubScreenState extends State<HomeSubScreen> {
             children: <Widget>[
               Text(
                 'Welcome to',
-                style: TextStyle(
-                    color: AcademeAppTheme.primaryColor,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+                style: TextStyle(color: AcademeAppTheme.primaryColor, fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Image.asset(
                 'assets/images/academe_logo.png',
@@ -39,19 +42,14 @@ class _HomeSubScreenState extends State<HomeSubScreen> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 8.0, 0, 8),
-          child: OffersSlider(sliderData: [
-            'assets/images/Banner1.png',
-            'assets/images/Banner2.png',
-            'assets/images/Banner3.png'
-          ]),
+          child: OffersSlider(sliderData: imageList),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 15, right: 16),
           child: Text(
             'What\'s New',
             textAlign: TextAlign.left,
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 22, letterSpacing: 1.0),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, letterSpacing: 1.0),
           ),
         ),
         NewCourses(
@@ -67,10 +65,7 @@ class _HomeSubScreenState extends State<HomeSubScreen> {
               Text(
                 'Top Streams',
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                    letterSpacing: 1.0),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, letterSpacing: 1.0),
               ),
               Buttons.miniPrimaryButton('View All', () {
                 //Navigate to all streams

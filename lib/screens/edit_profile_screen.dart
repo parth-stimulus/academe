@@ -52,7 +52,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     child: Text('Error while loading data, please retry'));
               }
               Map userDataFromAPI = snapshot.data['data'];
-              print('Name from API: ' + userDataFromAPI['name']);
+              // print('Name from API: ' + userDataFromAPI['name']);
               if (userDataFromAPI['name'] != null&&_nameFieldController.text.isEmpty) {
                 _nameFieldController.text = userDataFromAPI['name'];
               }
@@ -131,7 +131,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                       _loading = false;
                                     });
 
-                                    Scaffold.of(context).showSnackBar(
+                                    ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
                                             'Profile successfully updated.'),

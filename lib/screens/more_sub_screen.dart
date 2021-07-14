@@ -32,7 +32,7 @@ class _MoreSubScreenState extends State<MoreSubScreen> {
       future: _isAuthenticated, // a previously-obtained Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         if (snapshot.hasData) {
-          print(snapshot.data.toString());
+          // print(snapshot.data.toString());
           return ModalProgressHUD(
             inAsyncCall: _loading,
             child: ListView(

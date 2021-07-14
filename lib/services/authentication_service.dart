@@ -12,14 +12,14 @@ class AuthenticationService {
       if (_authTokenResultMap.containsKey('error')) {
         throw Exception(_authTokenResultMap['error']);
       }
-      print(_authTokenResultMap.toString());
+      // print(_authTokenResultMap.toString());
       if (_authTokenResultMap.containsKey('authToken') &&
           _authTokenResultMap['authToken'] != null &&
           _authTokenResultMap['authToken'].toString().isNotEmpty) {
         return true;
       }
     } catch (e) {
-      print('Error occured while checking token: ' + e.toString());
+      print('Error occurred while checking token: ' + e.toString());
       return false;
     }
     return false;
@@ -39,11 +39,11 @@ class AuthenticationService {
         Map<String, String> params = {
           "token": _authTokenResult['authToken'],
         };
-        print(params.toString());
+        // print(params.toString());
         var uri = Uri.https(kAPIDomain, '/api/me', params);
         var response = await http.get(uri);
         Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
-        print('ME Response: ' + responseMap.toString());
+        // print('ME Response: ' + responseMap.toString());
         if (responseMap["error"] == true) {
           throw Exception(responseMap["cause"].toString());
         }
@@ -51,7 +51,7 @@ class AuthenticationService {
         return result;
       }
     } catch (e) {
-      print('Error occured while getting user data: ' + e.toString());
+      print('Error occurred while getting user data: ' + e.toString());
       return result;
     }
     return result;
@@ -68,14 +68,14 @@ class AuthenticationService {
           headers: {"Content-Type": "application/json"}, body: body);
       Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
 
-      print('forgotpassword Response: ' + responseMap.toString());
+      // print('forgot password Response: ' + responseMap.toString());
       if (responseMap["error"] == true) {
         throw Exception(responseMap["cause"].toString());
       }
       result['data'] = responseMap["data"];
       return result;
     } catch (e) {
-      print('Error occured while sending new password: ' + e.toString());
+      print('Error occurred while sending new password: ' + e.toString());
       return result;
     }
   }

@@ -7,8 +7,7 @@ class SubscriptionsService {
   static Future<Map> getSubscriptionsData() async {
     Map<String, Object> result = new Map();
     try {
-      Map _authTokenResult =
-      await SharedPrefService.fetchFromSharedPref('authToken');
+      Map _authTokenResult = await SharedPrefService.fetchFromSharedPref('authToken');
       if (_authTokenResult.containsKey('error')) {
         throw Exception(_authTokenResult['error']);
       }
@@ -18,11 +17,11 @@ class SubscriptionsService {
         Map<String, String> params = {
           "token": _authTokenResult['authToken'],
         };
-        print(params.toString());
+        // print(params.toString());
         var uri = Uri.https(kAPIDomain, '/api/subscription', params);
         var response = await http.get(uri);
         Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
-        print('Subscriptions Response: ' + responseMap.toString());
+        // print('Subscriptions Response: ' + responseMap.toString());
         if (responseMap["error"] == true) {
           throw Exception(responseMap["cause"].toString());
         }
@@ -30,7 +29,7 @@ class SubscriptionsService {
         return result;
       }
     } catch (e) {
-      print('Error occured while getting user data: ' + e.toString());
+      print('Error occurred while getting user data: ' + e.toString());
       return result;
     }
     return result;

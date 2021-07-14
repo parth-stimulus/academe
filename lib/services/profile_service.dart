@@ -4,13 +4,11 @@ import 'package:academe/constant.dart';
 import 'shared_pref_service.dart';
 
 class ProfileService {
-  static Future<Map<String, Object>> updateUserProfile(
-      {String name, String email}) async {
+  static Future<Map<String, Object>> updateUserProfile({String name, String email}) async {
     String authToken;
     Map<String, Object> result = new Map();
     try {
-      Map _authTokenResult =
-          await SharedPrefService.fetchFromSharedPref('authToken');
+      Map _authTokenResult = await SharedPrefService.fetchFromSharedPref('authToken');
       if (_authTokenResult.containsKey('error')) {
         throw Exception(_authTokenResult['error']);
       }
@@ -28,11 +26,10 @@ class ProfileService {
         requestData['email'] = email;
       }
       var body = convert.jsonEncode(requestData);
-      print("Profile update request body: " + requestData.toString());
-      var response = await http.post(uri,
-          headers: {"Content-Type": "application/json"}, body: body);
+      // print("Profile update request body: " + requestData.toString());
+      var response = await http.post(uri, headers: {"Content-Type": "application/json"}, body: body);
       Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
-      print('Response: ' + responseMap.toString());
+      // print('Response: ' + responseMap.toString());
       if (responseMap["error"] == true) {
         throw Exception(responseMap["cause"].toString());
       }
@@ -44,13 +41,12 @@ class ProfileService {
     }
   }
 
-  static Future<Map<String, Object>> changePassword(String currentPassword,
-      String newPassword, String newPasswordConfirm) async {
+  static Future<Map<String, Object>> changePassword(
+      String currentPassword, String newPassword, String newPasswordConfirm) async {
     String authToken;
     Map<String, Object> result = new Map();
     try {
-      Map _authTokenResult =
-          await SharedPrefService.fetchFromSharedPref('authToken');
+      Map _authTokenResult = await SharedPrefService.fetchFromSharedPref('authToken');
       if (_authTokenResult.containsKey('error')) {
         throw Exception(_authTokenResult['error']);
       }
@@ -67,29 +63,25 @@ class ProfileService {
         "token": authToken
       };
       var body = convert.jsonEncode(requestData);
-      var response = await http.post(uri,
-          headers: {"Content-Type": "application/json"}, body: body);
+      var response = await http.post(uri, headers: {"Content-Type": "application/json"}, body: body);
       Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
-      print('Response: ' + responseMap.toString());
+      // print('Response: ' + responseMap.toString());
       if (responseMap["error"] == true) {
         throw Exception(responseMap["cause"].toString());
       }
       result['data'] = responseMap["data"];
       return result;
     } catch (e) {
-      result['error'] =
-          'Error occured while updating password: ' + e.toString();
+      result['error'] = 'Error occured while updating password: ' + e.toString();
       return result;
     }
   }
 
-  static Future<Map<String, Object>> contactUs(
-      String subject, String message) async {
+  static Future<Map<String, Object>> contactUs(String subject, String message) async {
     String authToken;
     Map<String, Object> result = new Map();
     try {
-      Map _authTokenResult =
-          await SharedPrefService.fetchFromSharedPref('authToken');
+      Map _authTokenResult = await SharedPrefService.fetchFromSharedPref('authToken');
       if (_authTokenResult.containsKey('error')) {
         throw Exception(_authTokenResult['error']);
       }
@@ -99,23 +91,18 @@ class ProfileService {
         authToken = _authTokenResult['authToken'];
       }
       var uri = Uri.https(kAPIDomain, '/api/contactus');
-      Map requestData = {
-        "subject": subject,
-        "message": message,
-        "token": authToken
-      };
+      Map requestData = {"subject": subject, "message": message, "token": authToken};
       var body = convert.jsonEncode(requestData);
-      var response = await http.post(uri,
-          headers: {"Content-Type": "application/json"}, body: body);
+      var response = await http.post(uri, headers: {"Content-Type": "application/json"}, body: body);
       Map<String, dynamic> responseMap = convert.jsonDecode(response.body);
-      print('Response: ' + responseMap.toString());
+      // print('Response: ' + responseMap.toString());
       if (responseMap["error"] == true) {
         throw Exception(responseMap["cause"].toString());
       }
       result['data'] = responseMap["data"];
       return result;
     } catch (e) {
-      result['error'] = 'Error occured while sending message: ' + e.toString();
+      result['error'] = 'Error occurred while sending message: ' + e.toString();
       return result;
     }
   }

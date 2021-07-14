@@ -82,7 +82,7 @@ class _AccountSubScreenState extends State<AccountSubScreen> {
 //                if (snapshot.data.containsKey('userName') &&
 //                    snapshot.data['userName'] != null) {
 //                  if (snapshot.data['userName'].toString().isNotEmpty)
-//                    print('setting signed in usernma');
+//                    print('setting signed in username');
 //                    _signedInUserName = snapshot.data['userName'].toString();
 //                }
                 return StreamBuilder<Map>(
@@ -93,7 +93,7 @@ class _AccountSubScreenState extends State<AccountSubScreen> {
                       if (snapshot.hasData) {
                         if (snapshot.data['data'] != null) {
                           print('--------------recent purchases-----------');
-                          print(snapshot.data['data']);
+                          // print(snapshot.data['data']);
                           if (snapshot.data['data'].containsKey('courses')) {
                             if (snapshot.data['data']['courses'] != null) {
 //                            return userProfileScreen(
@@ -337,7 +337,7 @@ class _AccountSubScreenState extends State<AccountSubScreen> {
                   _loading = false;
                 });
                 Dialogs().showInfoDialog(context, 'Password Updated',
-                    'Email with new password sent succesfully');
+                    'Email with new password sent successfully');
               }
             },
           ),
